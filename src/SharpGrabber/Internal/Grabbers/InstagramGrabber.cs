@@ -1,3 +1,4 @@
+using DotNetTools.SharpGrabber.Authentication;
 using DotNetTools.SharpGrabber.Exceptions;
 using DotNetTools.SharpGrabber.Media;
 using HtmlAgilityPack;
@@ -18,6 +19,12 @@ namespace DotNetTools.SharpGrabber.Internal.Grabbers
     /// </summary>
     public class InstagramGrabber : BaseGrabber
     {
+        #region Constants
+        public const string RootUrl = "https://www.instagram.com/";
+        public const string LoginUrl = RootUrl + "accounts/login/";
+        public const string ClassicLoginUrl = LoginUrl + "?force_classic_login";
+        #endregion
+
         #region Fields
 
         private readonly Regex _idPattern =
@@ -67,7 +74,7 @@ namespace DotNetTools.SharpGrabber.Internal.Grabbers
         {
             if (response.StatusCode != HttpStatusCode.OK)
                 throw new GrabException(
-                    $"An HTTP error occurred while retrieving Instagram content. Server returned {response.StatusCode} {response.ReasonPhrase}.");
+                    $"An HTTP error occurred while retrieving Instagram content. Server returned {(int)response.StatusCode} {response.ReasonPhrase}.");
         }
 
         /// <summary>
@@ -86,7 +93,6 @@ namespace DotNetTools.SharpGrabber.Internal.Grabbers
             {
                 dictionary.Add(metaTagMatch.Groups["propertyName"].Value, metaTagMatch.Groups["propertyValue"].Value);
             }
-            // TODO: Instagram is changed and needs user to be authorized before accessing the content
 
             var match = _graphqlScriptRegex.Match(content);
             if (!match.Success)
@@ -138,6 +144,12 @@ namespace DotNetTools.SharpGrabber.Internal.Grabbers
         #endregion
 
         #region Methods
+        public override IGrabberAuthenticator NewAuthenticator()
+        {
+            var auth = new HtmlFormBasicAuthenticator(new Uri(ClassicLoginUrl));
+            UseAuthenticator(auth);
+            return auth;
+        }
 
         /// <inheritdoc />
         public override bool Supports(Uri uri) => !string.IsNullOrEmpty(GrabId(uri));
@@ -157,7 +169,22 @@ namespace DotNetTools.SharpGrabber.Internal.Grabbers
             // download target page
             Status.Update(null, WorkStatusType.DownloadingPage);
             var client = HttpHelper.CreateClient(uri);
+            if (Authenticator != null)
+                Authenticator.TouchHttpClient(client);
             var response = await client.GetAsync(uri, cancellationToken);
+
+            // test for authentication requirement
+            if (response.StatusCode == HttpStatusCode.Found || response.StatusCode == HttpStatusCode.TemporaryRedirect)
+            {
+                var redirectLocation = response.Headers.Location;
+                if (!redirectLocation.ToString().StartsWith(LoginUrl))
+                    throw new GrabException("Instagram returned an unsupported redirect response.");
+
+                if (options.Credentials != null)
+                    return await AuthenticateAndRetryGrabAsync(uri, cancellationToken, options).ConfigureAwait(false);
+
+                throw new AuthenticationRequiredException("Instagram requested the client to authenticate.");
+            }
 
             // check response
             CheckResponse(response);
@@ -171,7 +198,6 @@ namespace DotNetTools.SharpGrabber.Internal.Grabbers
                 return GrabUsingMetadata(meta);
             }
         }
-
         #endregion
     }
 }

@@ -21,9 +21,14 @@ namespace DotNetTools.SharpGrabber.Internal
         /// <summary>
         /// Creates and configures an <see cref="HttpClient"/>.
         /// </summary>
-        public static HttpClient CreateClient(Uri uri = null)
+        public static HttpClient CreateClient(Uri uri = null, bool allowAutoRedirect = false)
         {
-            var client = new HttpClient {BaseAddress = uri};
+            var handler = new HttpClientHandler
+            {
+                AllowAutoRedirect = allowAutoRedirect,
+            };
+
+            var client = new HttpClient(handler) { BaseAddress = uri };
             client.DefaultRequestHeaders.Add("User-Agent", DefaultUserAgent);
             client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("en-US"));
             return client;

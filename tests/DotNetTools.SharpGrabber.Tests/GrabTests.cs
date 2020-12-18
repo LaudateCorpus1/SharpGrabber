@@ -1,6 +1,7 @@
 using DotNetTools.SharpGrabber.Internal.Grabbers;
 using DotNetTools.SharpGrabber.Media;
 using System;
+using System.Threading;
 using Xunit;
 
 namespace DotNetTools.SharpGrabber.Tests
@@ -13,7 +14,8 @@ namespace DotNetTools.SharpGrabber.Tests
             var grabber = new InstagramGrabber();
             var result =
                 await grabber.GrabAsync(
-                    new Uri("https://www.instagram.com/p/CAs5qr7gYQJ/?utm_source=ig_web_copy_link"));
+                    new Uri("https://www.instagram.com/p/CAs5qr7gYQJ/?utm_source=ig_web_copy_link"), CancellationToken.None,
+                    new GrabOptions().WithCredentials("", ""));
             Assert.Equal(2, result.Resources.Count);
         }
 

@@ -13,7 +13,7 @@ using System.Linq;
 namespace DotNetTools.SharpGrabber.Internal.Grabbers
 {
     /// <summary>
-    /// Represents a PornHub.com grabber.
+    /// Grabber for pornhub.com
     /// </summary>
     public class PornHubGrabber : BaseGrabber
     {

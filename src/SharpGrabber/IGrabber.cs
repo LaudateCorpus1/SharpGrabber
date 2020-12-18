@@ -31,18 +31,31 @@ namespace DotNetTools.SharpGrabber
         /// Default grab options for this grabber - if none is specified while invoking <see cref="IGrabber.GrabAsync(Uri, CancellationToken, GrabOptions)"/>.
         /// </summary>
         GrabOptions DefaultGrabOptions { get; }
-        
+
         /// <summary>
         /// Briefly checks if this grabber supports the specified URI.
         /// </summary>
         bool Supports(Uri uri);
 
         /// <summary>
+        /// Creates a new instance of authenticator suitable for this grabber.
+        /// </summary>
+        /// <remarks>
+        /// The returned authenticator will be used for this instance automatically.
+        /// </remarks>
+        IGrabberAuthenticator NewAuthenticator();
+
+        /// <summary>
+        /// Uses the specified authenticator for future grabs.
+        /// </summary>
+        void UseAuthenticator(IGrabberAuthenticator authenticator);
+
+        /// <summary>
         /// Asynchronously looks up the specified URI and grabs useful resources. In case of unsupported URI, NULL should
         /// be returned.
         /// </summary>
         Task<GrabResult> GrabAsync(Uri uri);
-        
+
         /// <summary>
         /// Asynchronously looks up the specified URI and grabs useful resources. In case of unsupported URI, NULL should
         /// be returned.

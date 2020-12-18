@@ -1,8 +1,9 @@
-# SharpGrabber
+﻿# SharpGrabber
+*⭐ Please support us by starring the project if you find it useful.*
 <img src="./assets/icon.png" alt="SharpGrabber" width="64"/>
 
 This project consists of several connected sub-projects:            
-- `SharpGrabber` is a *.NET Standard* library for crawling into top media provider websites such as **YouTube**, **Instagram** etc. in order to grab information and return direct links of the audio/video files.
+- `SharpGrabber` is a *.NET Standard* library for crawling into top media provider websites such as **YouTube**, **Vimeo** etc. in order to grab information and return direct links of the audio/video files.
 - `SharpGrabber.Converter` is a *.NET Standard* library based on `ffmpeg` shared libraries to join audio and video streams. This is particularly useful when grabbing high quality *YouTube* media that might be separated into audio and video files.
 - `SharpGrabber.Desktop` A cross-platform desktop application
 which utilizes both mentioned libraries to expose their functionality for desktop end-users.
@@ -58,9 +59,6 @@ Requirements of the cross-platform desktop application to run and operate correc
 The following features are top priority:
 - Support for more media providers
 - Accelerate downloads in the desktop app (like a download manager)
-
-## Support
-If you want to support this project, the best thing is to star it :)
 
 ## Contribution
 To contribute to this project, I'd appreciate if you'd  help with adding support for
