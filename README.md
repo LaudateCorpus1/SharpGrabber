@@ -1,6 +1,7 @@
 ﻿# SharpGrabber
-*⭐ Please support us by starring the project if you find it useful.*
 <img src="./assets/icon.png" alt="SharpGrabber" width="64"/>
+
+*⭐ Please support us by starring the project if you find it useful.*
 
 This project consists of several connected sub-projects:            
 - `SharpGrabber` is a *.NET Standard* library for crawling into top media provider websites such as **YouTube**, **Vimeo** etc. in order to grab information and return direct links of the audio/video files.
